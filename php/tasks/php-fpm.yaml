@@ -1,0 +1,5 @@
+- name: install php fpm
+  become: true
+  apt: 
+    pkg:
+      php-fpm

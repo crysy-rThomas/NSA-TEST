@@ -1,0 +1,34 @@
+- name: setup different servers
+  hosts: front, back, db
+  become: true
+  gather_facts: false
+  remote_user: admin
+
+  roles: 
+    - role: "./ssh"
+
+- name: setup db
+  hosts: db
+  become: true
+  remote_user: admin
+
+  roles:
+    - role: "./sql"
+
+- name: setup back
+  hosts: back
+  become: true
+  remote_user: admin
+
+  roles: 
+    - role: "./php"
+
+- name: setup front
+  hosts: front
+  become: true
+  remote_user: admin
+
+  roles:
+    - role: "./nginx"
+    - role: "./php"
+    - role: "./angular"

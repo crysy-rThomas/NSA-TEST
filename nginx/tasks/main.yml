@@ -1,0 +1,26 @@
+---
+# tasks file for nginx
+- name: apt-get update
+  become: true
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: install nginx
+  become: true
+  apt: 
+    name: nginx
+    state: latest
+
+- name: apply Nginx template
+  template:
+    src: ../templates/nginx-conf.j2
+    dest: /etc/nginx/sites-available/default
+  notify: restart-nginx
+
+- name: enable new site
+  file:
+    src: /etc/nginx/sites-available/default
+    dest: /etc/nginx/sites-enabled/default
+    state: link
+  notify: restart-nginx

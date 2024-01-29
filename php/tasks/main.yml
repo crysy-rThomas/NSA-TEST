@@ -1,0 +1,6 @@
+---
+# tasks file for php
+- include_tasks: php.yaml
+- include_tasks: composer.yaml
+- include_tasks: xdebug.yaml
+- include_tasks: php-fpm.yaml

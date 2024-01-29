@@ -1,0 +1,16 @@
+---
+# tasks file for angular
+- name: install npm
+  become: true
+  apt: 
+    name: "{{item}}"
+  with_items: 
+    - npm
+
+
+- name: Install Angular.js
+  become: true
+  npm:
+    name: "@angular/cli@10"
+    global: yes
+    state: present

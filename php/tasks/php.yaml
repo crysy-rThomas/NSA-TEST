@@ -1,0 +1,14 @@
+- name: install packages
+  become: true
+  apt:
+    pkg:
+        - php7.4-cli
+        - php-xml
+        - php-pgsql
+        - libapache2-mod-php
+        - apache2
+        - git
+        - zip
+        - unzip
+        - curl
+        - php-curl

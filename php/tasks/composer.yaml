@@ -1,0 +1,18 @@
+- name: download composer installer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/composer
+
+- name: install composer
+  shell: php /tmp/composer --install-dir=/usr/local/bin
+  become: true
+- name: rename composer executable
+  shell: mv /usr/local/bin/composer.phar /usr/local/bin/composer
+  become: true
+
+- name: set permissions for composer file
+  file:
+    path: /usr/local/bin/composer
+    mode: a+x
+    state: file
+  become: true

@@ -1,0 +1,17 @@
+[db]
+15.188.238.180
+
+[front] 
+35.180.40.176
+
+[back]
+35.180.27.171
+
+[key_to_add:vars]
+ansible_ssh_port=22 
+ansible_user=admin  
+ansible_connection=ssh 
+ansible_ssh_private_key=ssh/templates/goodenough.pem
+host_key_checking = False
+http_port=80
+http_host=nsa.local

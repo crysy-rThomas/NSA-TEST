@@ -1,0 +1,142 @@
+stages:
+  - build
+  - test
+  - deploy
+
+
+  key:
+    files:
+      - yarn.lock
+    paths:
+      - front/node_modules
+
+#############################################################
+########################### back ############################
+#############################################################
+
+back-build:
+  image: php:7.1
+  tags:
+    - build
+  only:
+    - main
+  script:
+  # Install and run Composer
+  - cd ./back/.
+  - curl --show-error --silent "https://getcomposer.org/installer" | php
+  - php composer.phar install
+  cache:
+    key: build-back
+      files:
+        - back/composer.lock
+      paths:
+        - back/vendor
+
+back-test:
+  image: php:7.1
+  tags:
+    - test
+  only:
+    - main
+  script:
+    - back/vendor/bin/phpunit --configuration phpunit.xml --coverage-text --colors=never
+  cache:
+    key: build-back
+      files:
+        - back/composer.lock
+      paths:
+        - back/vendor
+
+back-deploy:
+  image:
+    name: registry.gitlab.com/torese/docker-ansible
+  variables:
+    ANSIBLE_HOST_KEY_CHECKING: 'false'
+    ANSIBLE_FORCE_COLOR: 'true'
+    ANSIBLE_PYTHON_INTERPRRTER: /usr/bin/python3
+  tags:
+    - deploy
+  only:
+    - main
+  before_script:
+  - yum install httpd -y
+  - yum install -y python3
+  - ansible --version
+  script:
+    - ansible-playbook playbook.yaml -i ansible_hosts --key-file ssh/templates/goodenough.prem --ask-become-pass
+  cache:
+    key: build-back
+      files:
+        - back/composer.lock
+      paths:
+        - back/vendor
+
+##############################################################
+########################### front ############################
+##############################################################
+
+front-build:
+  image: node:18
+  tags:
+    - build
+  only:
+    - main
+  script:
+  # Install and run Yarn
+  - cd front
+  - npm install -g yarn
+  - yarn install
+  cache:
+    key: build-front
+      files:
+        - front/yarn.lock
+      paths:
+        - front/node_modules
+
+front-test:
+  image: node:18
+  tags:
+    - test
+  only:
+    - main
+  script:
+    - cd front
+    - yarn run test
+    - yarn run lint
+    - yarn run e2e
+  cache:
+    key: build-front
+      files:
+        - front/yarn.lock
+      paths:
+        - front/node_modules
+
+front-deploy:
+  image:
+    name: registry.gitlab.com/torese/docker-ansible
+  variables:
+    ANSIBLE_HOST_KEY_CHECKING: 'false'
+    ANSIBLE_FORCE_COLOR: 'true'
+    ANSIBLE_PYTHON_INTERPRRTER: /usr/bin/python3
+  tags:
+    - deploy
+  only:
+    - main
+  before_script:
+  - yum install httpd -y
+  - yum install -y python3
+  - ansible --version
+  script:
+    - ansible-playbook playbook.yaml -i ansible_hosts --key-file ssh/templates/goodenough.prem --ask-become-pass
+  cache:
+    key: build-front
+      files:
+        - front/yarn.lock
+      paths:
+        - front/node_modules
+
+################################################################
+########################### database ###########################
+################################################################
+
+database-deploy:

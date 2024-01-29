@@ -1,0 +1,11 @@
+---
+# tasks file for ssh
+- name: copy the key to remote
+  become: true
+  template:
+    src: ../templates/goodenough.pem
+    dest: ~/.ssh/goodenough.pem
+    owner: root
+    group: root
+    mode: 0400
+  tags: all
